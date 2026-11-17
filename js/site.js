@@ -177,18 +177,33 @@
     var footTargets = Array.prototype.filter.call(targets, inFoot);
     var pageBody = document.querySelector(".page-body");
     if (footTargets.length && pageBody) {
-      var footDone = false, footQ = false;
+      var footIn = false, footQ = false, footNear = true;
       var footCheck = function () {
         footQ = false;
-        if (footDone) return;
         var shown = innerHeight - pageBody.getBoundingClientRect().bottom;
-        if (shown < Math.min(footEl.offsetHeight, innerHeight) * 0.3) return;
-        footDone = true;
-        footTargets.forEach(function (el) { el.classList.add("in"); });
-        removeEventListener("scroll", footQueue);
+        if (!footIn) {
+          if (shown < Math.min(footEl.offsetHeight, innerHeight) * 0.3) return;
+          footIn = true;
+          footTargets.forEach(function (el) { el.classList.add("in"); });
+        } else if (shown <= 0) {
+          footIn = false;
+          footEl.classList.add("rv-snap");
+          footTargets.forEach(function (el) { el.classList.remove("in"); });
+          void footEl.offsetWidth;
+          footEl.classList.remove("rv-snap");
+        }
       };
       var footQueue = function () { if (!footQ) { footQ = true; requestAnimationFrame(footCheck); } };
-      addEventListener("scroll", footQueue, { passive: true });
+
+      var lastSec = pageBody.lastElementChild;
+      while (lastSec && !lastSec.offsetHeight) lastSec = lastSec.previousElementSibling;
+      if (lastSec) {
+        new IntersectionObserver(function (e) {
+          footNear = e[0].isIntersecting;
+          footQueue();
+        }, { rootMargin: "100% 0px" }).observe(lastSec);
+      }
+      addEventListener("scroll", function () { if (footNear) footQueue(); }, { passive: true });
       footCheck();
     }
   }

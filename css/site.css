@@ -1183,6 +1183,8 @@ footer.foot-n::before{content:none}
 .foot-mark.in i,.no-js .foot-mark i{transform:none}
 @media (prefers-reduced-motion:reduce){.foot-mark i{transform:none;transition:none}}
 
+footer.rv-snap .rv,footer.rv-snap .rv-line>span,footer.rv-snap .foot-mark i{transition:none!important}
+
 .fn-strip{display:flex;justify-content:flex-end;align-items:center;gap:8px clamp(18px,2.4vw,40px);flex:none;
   padding:clamp(8px,.9vw,12px) var(--fg) clamp(10px,1vw,14px)}
 .fn-strip>:first-child{margin-right:auto}
